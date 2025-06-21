@@ -1,65 +1,182 @@
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    color: #fff;
-    height: 100vh;
-    background-image: url('trivia-background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trivia Widget</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      height: 100vh;
+      background: linear-gradient(135deg, #3a0ca3, #7209b7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-  #timer {
-    font-size: 3em;
-    margin-bottom: 1em;
-    color: #ffd700;
-    text-align: center;
-  }
+    #timer {
+      font-size: 3em;
+      margin-bottom: 1em;
+      color: #ffd700;
+      text-align: center;
+    }
 
-  .question-block {
-    background: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
-    padding: 2em 4em;
-    border-radius: 20px;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.3);
-    max-width: 90%;
-    width: 1000px;
-    text-align: center;
-  }
+    .question-block {
+      background: rgba(0, 0, 0, 0.6);
+      border: 3px solid #fff;
+      padding: 2em 4em;
+      border-radius: 20px;
+      max-width: 90%;
+      width: 1000px;
+      text-align: center;
+      position: relative;
+    }
 
-  .category-title {
-    font-size: 3em;
-    margin-bottom: 1em;
-    color: #ffd700;
-  }
+    .question-block::before {
+      content: "?";
+      position: absolute;
+      font-size: 10em;
+      color: rgba(255, 255, 255, 0.1);
+      top: 50%;
+      left: -60px;
+      transform: translateY(-50%);
+    }
 
-  .question {
-    font-size: 2.5em;
-    margin-bottom: 1em;
-  }
+    .category-title {
+      font-size: 3em;
+      margin-bottom: 1em;
+      color: #ffd700;
+    }
 
-  .options {
-    font-size: 2em;
-  }
+    .question {
+      font-size: 2.5em;
+      margin-bottom: 1em;
+    }
 
-  .option {
-    display: block;
-    margin: 0.8em 0;
-  }
+    .options {
+      font-size: 2em;
+    }
 
-  .correct {
-    color: #00ff99;
-    font-weight: bold;
-  }
+    .option {
+      display: block;
+      margin: 0.8em 0;
+      border: 2px solid #fff;
+      padding: 0.4em 0.6em;
+      border-radius: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      cursor: default;
+    }
 
-  .reveal {
-    margin-top: 1.5em;
-    font-size: 2em;
-    color: #00ff99;
-  }
-</style>
+    .correct {
+      color: #00ff99;
+      font-weight: bold;
+      border-color: #00ff99;
+    }
+
+    .reveal {
+      margin-top: 1.5em;
+      font-size: 2em;
+      color: #00ff99;
+    }
+  </style>
+</head>
+<body>
+  <div id="timer">Revealing answer in 20 seconds...</div>
+  <div id="questions-wrapper"></div>
+
+  <script>
+    let selectedQuestion = null;
+    let selectedCategory = null;
+
+    function decodeHTMLEntities(text) {
+      const txt = document.createElement("textarea");
+      txt.innerHTML = text;
+      return txt.value;
+    }
+
+    async function fetchAllCategories() {
+      const res = await fetch('https://opentdb.com/api_category.php');
+      const data = await res.json();
+      return data.trivia_categories;
+    }
+
+    async function fetchQuestion(categoryId) {
+      const url = `https://opentdb.com/api.php?amount=1&category=${categoryId}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.response_code === 0 && data.results.length > 0) {
+        return data.results[0];
+      }
+      return null;
+    }
+
+    async function showRandomQuestion() {
+      const wrapper = document.getElementById('questions-wrapper');
+      wrapper.innerHTML = '';
+      const categories = await fetchAllCategories();
+      selectedCategory = categories[Math.floor(Math.random() * categories.length)];
+      const qObj = await fetchQuestion(selectedCategory.id);
+
+      if (!qObj) {
+        wrapper.innerHTML = "<div class='question-block'>Could not load a question. Please try again.</div>";
+        return;
+      }
+
+      let options;
+      const correct = decodeHTMLEntities(qObj.correct_answer);
+      if (qObj.type === "boolean") {
+        options = ["True", "False"];
+      } else {
+        options = [...qObj.incorrect_answers.map(decodeHTMLEntities)];
+        const answerIndex = Math.floor(Math.random() * (options.length + 1));
+        options.splice(answerIndex, 0, correct);
+      }
+
+      const answerIndex = options.findIndex(opt => opt === correct);
+
+      selectedQuestion = { answerIndex, correct, options };
+
+      const block = document.createElement('div');
+      block.className = 'question-block';
+      block.innerHTML = `
+        <div class="category-title">${selectedCategory.name}</div>
+        <div class="question">${decodeHTMLEntities(qObj.question)}</div>
+        <div class="options" id="options">
+          ${options.map((opt, i) =>
+            `<span class="option" id="opt-${i}">${String.fromCharCode(65 + i)}. ${opt}</span>`
+          ).join('')}
+        </div>
+        <div class="reveal" id="reveal" style="display:none;">
+          Answer: <span class="correct">${String.fromCharCode(65 + answerIndex)}. ${correct}</span>
+        </div>
+      `;
+      wrapper.appendChild(block);
+    }
+
+    function revealAnswer() {
+      if (!selectedQuestion) return;
+      document.getElementById('reveal').style.display = 'block';
+      document.getElementById(`opt-${selectedQuestion.answerIndex}`).classList.add('correct');
+      document.getElementById('timer').innerText = 'Answer revealed!';
+    }
+
+    function startTimer(duration) {
+      let timer = duration;
+      const timerLabel = document.getElementById('timer');
+      const interval = setInterval(function () {
+        timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
+        if (--timer < 0) clearInterval(interval);
+      }, 1000);
+    }
+
+    (async () => {
+      await showRandomQuestion();
+      startTimer(20);
+      setTimeout(revealAnswer, 20000);
+    })();
+  </script>
+</body>
+</html>
