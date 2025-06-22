@@ -4,105 +4,159 @@
   <meta charset="UTF-8">
   <title>Trivia Widget</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    html, body {
+      height: 100%;
       margin: 0;
       padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
       color: #fff;
       height: 100vh;
+      width: 100vw;
       background: linear-gradient(135deg, #3a0ca3, #7209b7);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
-
     #timer {
-      font-size: 3em;
-      margin-bottom: 1em;
+      font-size: 4vw;
+      margin-bottom: 2vh;
       color: #ffd700;
       text-align: center;
+      text-shadow: 1px 2px 8px #000;
+      width: 100vw;
     }
-
+    #questions-wrapper {
+      width: 100vw;
+      height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     .question-block {
       background: rgba(0, 0, 0, 0.6);
-      border: 3px solid #fff;
-      padding: 2em 4em;
-      border-radius: 20px;
-      max-width: 90%;
-      width: 1000px;
+      border: 0.4vw solid #fff;
+      border-radius: 2vw;
+      width: 90vw;
+      max-width: 1100px;
+      min-height: 65vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3vw 3vw;
+      box-sizing: border-box;
       text-align: center;
       position: relative;
+      overflow: hidden;
     }
-
     .question-block::before {
       content: "?";
       position: absolute;
-      font-size: 10em;
-      color: rgba(255, 255, 255, 0.1);
+      font-size: 18vw;
+      color: rgba(255,255,255,0.09);
       top: 50%;
-      left: -60px;
+      left: 1vw;
       transform: translateY(-50%);
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
     }
-
     .category-title {
-      font-size: 3em;
-      margin-bottom: 1em;
+      font-size: 3vw;
+      margin-bottom: 1.5vh;
       color: #ffd700;
+      z-index: 1;
+      font-weight: bold;
+      line-height: 1.1;
+      text-shadow: 1px 2px 8px #000;
+      overflow-wrap: break-word;
+      hyphens: auto;
     }
-
     .question {
-      font-size: 2.5em;
-      margin-bottom: 1em;
+      font-size: 3vw;
+      margin-bottom: 2vh;
+      z-index: 1;
+      font-weight: bold;
+      line-height: 1.15;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      word-break: break-word;
+      max-width: 95%;
     }
-
     .options {
-      font-size: 2em;
+      font-size: 2.3vw;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      z-index: 1;
+      gap: 2vh;
+      margin-bottom: 2vh;
     }
-
     .option {
       display: block;
-      margin: 0.8em 0;
-      border: 2px solid #fff;
-      padding: 0.4em 0.6em;
-      border-radius: 10px;
-      background-color: rgba(255, 255, 255, 0.1);
+      margin: 0 auto;
+      border: 0.25vw solid #fff;
+      padding: 1.2vh 2vw;
+      border-radius: 1vw;
+      background-color: rgba(255, 255, 255, 0.13);
       cursor: default;
+      transition: background 0.2s, border 0.2s;
+      min-width: 40vw;
+      max-width: 90vw;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      word-break: break-word;
+      font-size: 2.3vw;
+      box-sizing: border-box;
+      line-height: 1.15;
     }
-
     .correct {
       color: #00ff99;
       font-weight: bold;
-      border-color: #00ff99;
+      border-color: #00ff99 !important;
+      background: rgba(0,255,153,0.08);
     }
-
     .reveal {
-      margin-top: 1.5em;
-      font-size: 2em;
+      margin-top: 2.5vh;
+      font-size: 2.5vw;
       color: #00ff99;
+      z-index: 1;
+      text-shadow: 1px 2px 8px #000;
+    }
+    @media (max-width: 700px) {
+      .question-block {
+        padding: 3vw 2vw;
+      }
+      .question,
+      .category-title,
+      .option,
+      .reveal,
+      #timer {
+        font-size: 5vw;
+      }
     }
   </style>
 </head>
 <body>
   <div id="timer">Revealing answer in 20 seconds...</div>
   <div id="questions-wrapper"></div>
-
   <script>
     let selectedQuestion = null;
     let selectedCategory = null;
-
     function decodeHTMLEntities(text) {
       const txt = document.createElement("textarea");
       txt.innerHTML = text;
       return txt.value;
     }
-
     async function fetchAllCategories() {
       const res = await fetch('https://opentdb.com/api_category.php');
       const data = await res.json();
       return data.trivia_categories;
     }
-
     async function fetchQuestion(categoryId) {
       const url = `https://opentdb.com/api.php?amount=1&category=${categoryId}`;
       const res = await fetch(url);
@@ -112,19 +166,16 @@
       }
       return null;
     }
-
     async function showRandomQuestion() {
       const wrapper = document.getElementById('questions-wrapper');
       wrapper.innerHTML = '';
       const categories = await fetchAllCategories();
       selectedCategory = categories[Math.floor(Math.random() * categories.length)];
       const qObj = await fetchQuestion(selectedCategory.id);
-
       if (!qObj) {
         wrapper.innerHTML = "<div class='question-block'>Could not load a question. Please try again.</div>";
         return;
       }
-
       let options;
       const correct = decodeHTMLEntities(qObj.correct_answer);
       if (qObj.type === "boolean") {
@@ -134,11 +185,8 @@
         const answerIndex = Math.floor(Math.random() * (options.length + 1));
         options.splice(answerIndex, 0, correct);
       }
-
       const answerIndex = options.findIndex(opt => opt === correct);
-
       selectedQuestion = { answerIndex, correct, options };
-
       const block = document.createElement('div');
       block.className = 'question-block';
       block.innerHTML = `
@@ -155,14 +203,12 @@
       `;
       wrapper.appendChild(block);
     }
-
     function revealAnswer() {
       if (!selectedQuestion) return;
       document.getElementById('reveal').style.display = 'block';
       document.getElementById(`opt-${selectedQuestion.answerIndex}`).classList.add('correct');
       document.getElementById('timer').innerText = 'Answer revealed!';
     }
-
     function startTimer(duration) {
       let timer = duration;
       const timerLabel = document.getElementById('timer');
@@ -171,7 +217,6 @@
         if (--timer < 0) clearInterval(interval);
       }, 1000);
     }
-
     (async () => {
       await showRandomQuestion();
       startTimer(20);
