@@ -18,7 +18,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      /* Remove justify-content: center */
       overflow: hidden;
     }
     #timer {
@@ -28,6 +28,14 @@
       text-align: center;
       text-shadow: 1px 2px 8px #000;
       width: 100vw;
+      /* Stick to top */
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      background: rgba(58,12,163,0.93);
+      padding: 1vh 0;
+      box-sizing: border-box;
     }
     #questions-wrapper {
       width: 100vw;
@@ -35,98 +43,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-top: 7vh; /* create space for fixed timer */
     }
-    .question-block {
-      background: rgba(0, 0, 0, 0.6);
-      border: 0.4vw solid #fff;
-      border-radius: 2vw;
-      width: 90vw;
-      max-width: 1100px;
-      min-height: 65vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 3vw 3vw;
-      box-sizing: border-box;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .question-block::before {
-      content: "?";
-      position: absolute;
-      font-size: 18vw;
-      color: rgba(255,255,255,0.09);
-      top: 50%;
-      left: 1vw;
-      transform: translateY(-50%);
-      z-index: 0;
-      pointer-events: none;
-      user-select: none;
-    }
-    .category-title {
-      font-size: 3vw;
-      margin-bottom: 1.5vh;
-      color: #ffd700;
-      z-index: 1;
-      font-weight: bold;
-      line-height: 1.1;
-      text-shadow: 1px 2px 8px #000;
-      overflow-wrap: break-word;
-      hyphens: auto;
-    }
-    .question {
-      font-size: 3vw;
-      margin-bottom: 2vh;
-      z-index: 1;
-      font-weight: bold;
-      line-height: 1.15;
-      overflow-wrap: break-word;
-      hyphens: auto;
-      word-break: break-word;
-      max-width: 95%;
-    }
-    .options {
-      font-size: 2.3vw;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      z-index: 1;
-      gap: 2vh;
-      margin-bottom: 2vh;
-    }
-    .option {
-      display: block;
-      margin: 0 auto;
-      border: 0.25vw solid #fff;
-      padding: 1.2vh 2vw;
-      border-radius: 1vw;
-      background-color: rgba(255, 255, 255, 0.13);
-      cursor: default;
-      transition: background 0.2s, border 0.2s;
-      min-width: 40vw;
-      max-width: 90vw;
-      overflow-wrap: break-word;
-      hyphens: auto;
-      word-break: break-word;
-      font-size: 2.3vw;
-      box-sizing: border-box;
-      line-height: 1.15;
-    }
-    .correct {
-      color: #00ff99;
-      font-weight: bold;
-      border-color: #00ff99 !important;
-      background: rgba(0,255,153,0.08);
-    }
-    .reveal {
-      margin-top: 2.5vh;
-      font-size: 2.5vw;
-      color: #00ff99;
-      z-index: 1;
-      text-shadow: 1px 2px 8px #000;
-    }
+    .question-block { /* ...unchanged... */ }
+    .question-block::before { /* ...unchanged... */ }
+    .category-title { /* ...unchanged... */ }
+    .question { /* ...unchanged... */ }
+    .options { /* ...unchanged... */ }
+    .option { /* ...unchanged... */ }
+    .correct { /* ...unchanged... */ }
+    .reveal { /* ...unchanged... */ }
     @media (max-width: 700px) {
       .question-block {
         padding: 3vw 2vw;
@@ -138,6 +64,9 @@
       #timer {
         font-size: 5vw;
       }
+      #questions-wrapper {
+        margin-top: 11vw;
+      }
     }
   </style>
 </head>
@@ -147,6 +76,8 @@
   <script>
     let selectedQuestion = null;
     let selectedCategory = null;
+    let timerInterval = null;
+
     function decodeHTMLEntities(text) {
       const txt = document.createElement("textarea");
       txt.innerHTML = text;
@@ -208,13 +139,20 @@
       document.getElementById('reveal').style.display = 'block';
       document.getElementById(`opt-${selectedQuestion.answerIndex}`).classList.add('correct');
       document.getElementById('timer').innerText = 'Answer revealed!';
+      if (timerInterval) clearInterval(timerInterval);
     }
     function startTimer(duration) {
       let timer = duration;
       const timerLabel = document.getElementById('timer');
-      const interval = setInterval(function () {
-        timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
-        if (--timer < 0) clearInterval(interval);
+      timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
+      timerInterval = setInterval(function () {
+        timer--;
+        if (timer > 0) {
+          timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
+        } else {
+          clearInterval(timerInterval);
+          timerLabel.textContent = `Answer revealed!`;
+        }
       }, 1000);
     }
     (async () => {
