@@ -84,10 +84,11 @@
   </style>
 </head>
 <body>
-  <div id="timer">Revealing answer in 20 seconds...</div>
+  <div id="timer">Revealing answer in 20 seconds.</div>
   <div id="questions-wrapper">
     <div class="question-bg">?</div>
   </div>
+
   <script>
     // Questions are embedded directly below. No fetch needed!
     const questions = [
@@ -15510,11 +15511,12 @@
       const wrapper = document.getElementById('questions-wrapper');
       const bg = wrapper.querySelector('.question-bg');
       wrapper.innerHTML = '';
-      if(bg) wrapper.appendChild(bg);
+      if (bg) wrapper.appendChild(bg);
 
-      const options = qObj.options;
-      const answerIndex = qObj.correctIndex;
-      selectedQuestion = { answerIndex, options };
+      selectedQuestion = {
+        answerIndex: qObj.correctIndex,
+        options: qObj.options
+      };
 
       const block = document.createElement('div');
       block.className = 'question-block';
@@ -15522,15 +15524,16 @@
         <div class="category-title">${qObj.category}</div>
         <div class="question">${qObj.question}</div>
         <div class="options" id="options">
-          ${options.map((opt, i) =>
+          ${qObj.options.map((opt, i) =>
             `<span class="option" id="opt-${i}">${String.fromCharCode(65 + i)}. ${opt}</span>`
           ).join('')}
         </div>
         <div class="reveal" id="reveal" style="display:none;">
-          Answer: <span class="correct">${String.fromCharCode(65 + answerIndex)}. ${options[answerIndex]}</span>
+          Answer: <span class="correct">${String.fromCharCode(65 + qObj.correctIndex)}. ${qObj.options[qObj.correctIndex]}</span>
         </div>
       `;
       wrapper.appendChild(block);
+
       if (!bg) {
         const bgDiv = document.createElement('div');
         bgDiv.className = 'question-bg';
@@ -15550,27 +15553,27 @@
     function startTimer(duration) {
       let timer = duration;
       const timerLabel = document.getElementById('timer');
-      timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
-      timerInterval = setInterval(function () {
+      timerLabel.textContent = `Revealing answer in ${timer} seconds...`;
+
+      timerInterval = setInterval(() => {
         timer--;
         if (timer > 0) {
-          timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
+          timerLabel.textContent = `Revealing answer in ${timer} seconds...`;
         } else {
           clearInterval(timerInterval);
-          timerLabel.textContent = `Answer revealed!`;
+          revealAnswer();
         }
       }, 1000);
     }
 
-    // Initialize the trivia UI
+    // === Init ===
     (() => {
-      if (!questions || !questions.length) {
+      if (!questions.length) {
         document.getElementById('questions-wrapper').innerText = 'No questions found!';
         return;
       }
-      const randIdx = Math.floor(Math.random() * questions.length);
-      const randQuestion = questions[randIdx];
-      showQuestion(randQuestion);
+      const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+      showQuestion(randomQuestion);
       startTimer(20);
       setTimeout(revealAnswer, 20000);
     })();
