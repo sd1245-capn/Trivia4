@@ -652,9 +652,8 @@
     "question": "Who is the author of the Harry Potter series?",
     "options": ["J.R.R. Tolkien", "J.K. Rowling", "Stephen King", "Suzanne Collins"],
     "correctIndex": 1
-  }
-]
-[
+  },
+  [
   {
     "category": "Sports",
     "question": "Which baseball player was the first to reach 3,000 hits in their career?",
