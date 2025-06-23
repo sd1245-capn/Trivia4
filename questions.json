@@ -653,7 +653,6 @@
     "options": ["J.R.R. Tolkien", "J.K. Rowling", "Stephen King", "Suzanne Collins"],
     "correctIndex": 1
   },
-  [
   {
     "category": "Sports",
     "question": "Which baseball player was the first to reach 3,000 hits in their career?",
@@ -1008,12 +1007,7 @@
     "options": ["Guitar", "Violin", "Piano", "Saxophone"],
     "correctIndex": 2
   },
-  {
-    "category": "General Knowledge",
-    "question": "What is the main ingredient of tofu?",
-    "options": ["Rice", "Soybeans", "Milk", "Wheat"],
-    "correctIndex": 1[
-  {
+  }    {
     "category": "Sports",
     "question": "Which NBA player was known as 'The Answer'?",
     "options": ["Allen Iverson", "Vince Carter", "Ray Allen", "Jason Kidd"],
@@ -1360,11 +1354,7 @@
     "question": "Who wrote 'Pride and Prejudice'?",
     "options": ["Emily Brontë", "Jane Austen", "Charlotte Brontë", "Mary Shelley"],
     "correctIndex": 1
-  }
-]
-  }
-]
-[
+  },
   {
     "category": "Sports",
     "question": "Which NFL team won Super Bowl LVII in 2023?",
@@ -1964,9 +1954,7 @@
     "question": "Who played the title role in 'Mrs. Doubtfire'?",
     "options": ["Robin Williams", "Steve Martin", "Jim Carrey", "Dustin Hoffman"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Sports",
     "question": "Who won the NBA Finals MVP in 2024?",
@@ -2464,8 +2452,7 @@
     "question": "Who played the main character in 'The Mask'?",
     "options": ["Jim Carrey", "Robin Williams", "Adam Sandler", "Will Ferrell"],
     "correctIndex": 0
-  }
-][
+  },
   {
     "category": "Sports",
     "question": "Who won the NBA Finals MVP in 2024?",
@@ -2963,9 +2950,7 @@
     "question": "Who played the main character in 'The Mask'?",
     "options": ["Jim Carrey", "Robin Williams", "Adam Sandler", "Will Ferrell"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Sports",
     "question": "Which footballer won the Ballon d'Or in 2023?",
@@ -3409,9 +3394,7 @@
     "question": "How many continents are there on Earth?",
     "options": ["5", "6", "7", "8"],
     "correctIndex": 2
-  }
-]
-[
+  },
   {
     "category": "Sports",
     "question": "Which country won the 2021 Copa América soccer tournament?",
@@ -3813,9 +3796,7 @@
     "question": "What is the tallest mountain in North America?",
     "options": ["Mount Whitney", "Mount McKinley (Denali)", "Mount Logan", "Mount Elbert"],
     "correctIndex": 1
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Which MLB player holds the all-time home run record?",
@@ -4295,9 +4276,7 @@
     "question": "Who was the head coach of the New England Patriots for six Super Bowl wins?",
     "options": ["Bill Belichick", "Tom Landry", "Bill Walsh", "Don Shula"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Which MLB team is known as 'The Amazin’s'?",
@@ -4777,9 +4756,7 @@
     "question": "Who was the first player to return a Super Bowl kickoff for a touchdown?",
     "options": ["Devin Hester", "Desmond Howard", "Tim Dwight", "Jacoby Jones"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Who was the first MLB player to join the 40-40 club (40 HR, 40 SB in one season)?",
@@ -5258,9 +5235,7 @@
     "question": "Who was the first tight end to record 1,000 receiving yards in a season?",
     "options": ["Kellen Winslow", "Tony Gonzalez", "Shannon Sharpe", "Rob Gronkowski"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Who is the only player to win MVP in both the American and National League?",
@@ -5503,9 +5478,7 @@
     "question": "Which NFL team has the most Super Bowl appearances?",
     "options": ["New England Patriots", "Pittsburgh Steelers", "Dallas Cowboys", "San Francisco 49ers"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Who is the only MLB player to win the Cy Young Award in both leagues?",
@@ -5748,9 +5721,7 @@
     "question": "Who won the Heisman Trophy in 2023?",
     "options": ["Jayden Daniels", "Caleb Williams", "Marvin Harrison Jr.", "Bo Nix"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Who is the only pitcher to throw back-to-back no-hitters in MLB history?",
@@ -5993,9 +5964,7 @@
     "question": "Who was the first player to win Super Bowl MVP on a losing team?",
     "options": ["Chuck Howley", "Larry Csonka", "Terry Bradshaw", "Franco Harris"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Which MLB team drafted Derek Jeter?",
@@ -6238,9 +6207,7 @@
     "question": "Who was the first player to score a touchdown in a Super Bowl?",
     "options": ["Max McGee", "Bart Starr", "Jim Taylor", "Paul Hornung"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Which MLB team has won the most pennants in the American League?",
@@ -6483,9 +6450,7 @@
     "question": "Who was the first player to win the NFL MVP and Super Bowl MVP in the same season?",
     "options": ["Bart Starr", "Joe Namath", "Terry Bradshaw", "Joe Montana"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Who was the first MLB player to hit 60 home runs in a single season twice?",
@@ -6728,9 +6693,7 @@
     "question": "Who was the first rookie quarterback to throw for 400 yards in a game?",
     "options": ["Cam Newton", "Andrew Luck", "Justin Herbert", "Peyton Manning"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Who was the first MLB player to hit 50 home runs and steal 50 bases in a season?",
@@ -6973,9 +6936,7 @@
     "question": "Which team lost the first four Super Bowls they played in?",
     "options": ["Buffalo Bills", "Minnesota Vikings", "Cleveland Browns", "Detroit Lions"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Who was the first MLB player to win the MVP award three times?",
@@ -7218,9 +7179,7 @@
     "question": "Which NFL player was the first to return two kickoffs for touchdowns in a Super Bowl?",
     "options": ["Devin Hester", "Desmond Howard", "Tim Dwight", "Jacoby Jones"],
     "correctIndex": 1
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Who was the first MLB player to hit 40 home runs and steal 40 bases in a season?",
@@ -7463,9 +7422,7 @@
     "question": "Who was the first player to win a Heisman Trophy and Super Bowl MVP?",
     "options": ["Marcus Allen", "Roger Staubach", "Desmond Howard", "Jim Plunkett"],
     "correctIndex": 0
-  }
-]
-[
+  },
   {
     "category": "Baseball",
     "question": "Who was the first MLB player to hit 60 home runs in a single season?",
@@ -7648,7 +7605,6 @@
     "options": ["Brian Leetch", "Pat LaFontaine", "Brett Hull", "Patrick Kane"],
     "correctIndex": 3
   },
-
   {
     "category": "American Football",
     "question": "Who was the first player to rush for 2,000 yards in a single NFL season?",
@@ -7687,26 +7643,8 @@
   },
   {
     "category": "American Football",
-    "question": "Which NFL team has the most Super Bowl appearances?",
-    "options": ["Dallas Cowboys", "New England Patriots", "Pittsburgh Steelers", "San Francisco 49ers"],
-    "correctIndex": 1
-  },
-  {
-    "category": "American Football",
     "question": "Who holds the NFL record for most passing yards in a single season?",
     "options": ["Drew Brees", "Tom Brady", "Peyton Manning", "Patrick Mahomes"],
     "correctIndex": 2
-  },
-  {
-    "category": "American Football",
-    "question": "Who was the first coach to win Super Bowls with two different teams?",
-    "options": ["Don Shula", "Bill Parcells", "Vince Lombardi", "No coach has done this"],
-    "correctIndex": 3
-  },
-  {
-    "category": "American Football",
-    "question": "Who was the first player to win the NFL MVP award three times?",
-    "options": ["Jim Brown", "Johnny Unitas", "Peyton Manning", "Brett Favre"],
-    "correctIndex": 0
   }
 ]
