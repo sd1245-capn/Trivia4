@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -43,6 +43,7 @@
       top: 50%;
       left: -60px;
       transform: translateY(-50%);
+      pointer-events: none;
     }
 
     .category-title {
@@ -85,9 +86,7 @@
 </head>
 <body>
   <div id="timer">Revealing answer in 20 seconds...</div>
-  <div id="questions-wrapper">
-    <div class="question-bg">?</div>
-  </div>
+  <div id="questions-wrapper"></div>
   <script>
     // Questions are embedded directly below. No fetch needed!
     const questions = [
@@ -15404,78 +15403,71 @@
   }
     ];
 
-    let selectedQuestion = null;
-    let timerInterval = null;
+let selectedQuestion = null;
+let timerInterval = null;
 
-    function showQuestion(qObj) {
-      const wrapper = document.getElementById('questions-wrapper');
-      // Keep the background ? intact
-      const bg = wrapper.querySelector('.question-bg');
-      wrapper.innerHTML = '';
-      if(bg) wrapper.appendChild(bg);
+function showQuestion(qObj) {
+  const wrapper = document.getElementById('questions-wrapper');
+  wrapper.innerHTML = ''; // Clear previous content
 
-      const options = qObj.options;
-      const answerIndex = qObj.correctIndex;
-      selectedQuestion = { answerIndex, options };
+  // Add the background question mark
+  const bgDiv = document.createElement('div');
+  bgDiv.className = 'question-bg';
+  bgDiv.innerText = '?';
+  wrapper.appendChild(bgDiv);
 
-      const block = document.createElement('div');
-      block.className = 'question-block';
-      block.innerHTML = `
-        <div class="category-title">${qObj.category}</div>
-        <div class="question">${qObj.question}</div>
-        <div class="options" id="options">
-          ${options.map((opt, i) =>
-            `<span class="option" id="opt-${i}">${String.fromCharCode(65 + i)}. ${opt}</span>`
-          ).join('')}
-        </div>
-        <div class="reveal" id="reveal" style="display:none;">
-          Answer: <span class="correct">${String.fromCharCode(65 + answerIndex)}. ${options[answerIndex]}</span>
-        </div>
-      `;
-      wrapper.appendChild(block);
-      // Keep background question mark at the back
-      if (!bg) {
-        const bgDiv = document.createElement('div');
-        bgDiv.className = 'question-bg';
-        bgDiv.innerText = '?';
-        wrapper.insertBefore(bgDiv, wrapper.firstChild);
-      }
-    }
+  const options = qObj.options;
+  const answerIndex = qObj.correctIndex;
+  selectedQuestion = { answerIndex, options };
 
-    function revealAnswer() {
-      if (!selectedQuestion) return;
-      document.getElementById('reveal').style.display = 'block';
-      document.getElementById(`opt-${selectedQuestion.answerIndex}`).classList.add('correct');
-      document.getElementById('timer').innerText = 'Answer revealed!';
-      if (timerInterval) clearInterval(timerInterval);
-    }
+  const block = document.createElement('div');
+  block.className = 'question-block';
+  block.innerHTML = `
+    <div class="category-title">${qObj.category}</div>
+    <div class="question">${qObj.question}</div>
+    <div class="options" id="options">
+      ${options.map((opt, i) =>
+        `<span class="option" id="opt-${i}">${String.fromCharCode(65 + i)}. ${opt}</span>`
+      ).join('')}
+    </div>
+    <div class="reveal" id="reveal" style="display:none;">
+      Answer: <span class="correct">${String.fromCharCode(65 + answerIndex)}. ${options[answerIndex]}</span>
+    </div>
+  `;
+  wrapper.appendChild(block);
+}
 
-    function startTimer(duration) {
-      let timer = duration;
-      const timerLabel = document.getElementById('timer');
+function revealAnswer() {
+  if (!selectedQuestion) return;
+  document.getElementById('reveal').style.display = 'block';
+  document.getElementById(`opt-${selectedQuestion.answerIndex}`).classList.add('correct');
+  document.getElementById('timer').innerText = 'Answer revealed!';
+  if (timerInterval) clearInterval(timerInterval);
+}
+
+function startTimer(duration) {
+  let timer = duration;
+  const timerLabel = document.getElementById('timer');
+  timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
+  timerInterval = setInterval(function () {
+    timer--;
+    if (timer > 0) {
       timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
-      timerInterval = setInterval(function () {
-        timer--;
-        if (timer > 0) {
-          timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
-        } else {
-          clearInterval(timerInterval);
-          timerLabel.textContent = `Answer revealed!`;
-        }
-      }, 1000);
+    } else {
+      clearInterval(timerInterval);
+      timerLabel.textContent = `Answer revealed!`;
     }
+  }, 1000);
+}
 
-    // No fetch or async needed!
-    (() => {
-      // 1. Pick a random question
-      const randIdx = Math.floor(Math.random() * questions.length);
-      const randQuestion = questions[randIdx];
-      // 2. Show the question
-      showQuestion(randQuestion);
-      // 3. Start timer and reveal after 20s
-      startTimer(20);
-      setTimeout(revealAnswer, 20000);
-    })();
-  </script>
-</body>
-</html>
+// No fetch or async needed!
+(() => {
+  // 1. Pick a random question
+  const randIdx = Math.floor(Math.random() * questions.length);
+  const randQuestion = questions[randIdx];
+  // 2. Show the question
+  showQuestion(randQuestion);
+  // 3. Start timer and reveal after 20s
+  startTimer(20);
+  setTimeout(revealAnswer, 20000);
+})();
