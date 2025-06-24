@@ -84,11 +84,10 @@
   </style>
 </head>
 <body>
-  <div id="timer">Revealing answer in 20 seconds.</div>
+  <div id="timer">Revealing answer in 20 seconds...</div>
   <div id="questions-wrapper">
     <div class="question-bg">?</div>
   </div>
-
   <script>
     // Questions are embedded directly below. No fetch needed!
     const questions = [
@@ -15405,118 +15404,19 @@
   }
     ];
 
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Trivia Widget</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      color: #fff;
-      height: 100vh;
-      background: linear-gradient(135deg, #3a0ca3, #7209b7);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    #timer {
-      font-size: 3em;
-      margin-bottom: 1em;
-      color: #ffd700;
-      text-align: center;
-    }
-    .question-block {
-      background: rgba(0, 0, 0, 0.6);
-      border: 3px solid #fff;
-      padding: 2em 4em;
-      border-radius: 20px;
-      max-width: 90%;
-      width: 1000px;
-      text-align: center;
-      position: relative;
-    }
-    .question-block::before {
-      content: "?";
-      position: absolute;
-      font-size: 10em;
-      color: rgba(255, 255, 255, 0.1);
-      top: 50%;
-      left: -60px;
-      transform: translateY(-50%);
-    }
-    .category-title {
-      font-size: 3em;
-      margin-bottom: 1em;
-      color: #ffd700;
-    }
-    .question {
-      font-size: 2.5em;
-      margin-bottom: 1em;
-    }
-    .options {
-      font-size: 2em;
-    }
-    .option {
-      display: block;
-      margin: 0.8em 0;
-      border: 2px solid #fff;
-      padding: 0.4em 0.6em;
-      border-radius: 10px;
-      background-color: rgba(255, 255, 255, 0.1);
-      cursor: default;
-    }
-    .correct {
-      color: #00ff99;
-      font-weight: bold;
-      border-color: #00ff99;
-    }
-    .reveal {
-      margin-top: 1.5em;
-      font-size: 2em;
-      color: #00ff99;
-    }
-  </style>
-</head>
-<body>
-  <div id="timer">Revealing answer in 20 seconds...</div>
-  <div id="questions-wrapper">
-    <div class="question-bg">?</div>
-  </div>
-  <script>
-    // --- Questions array (add as many as you like) ---
-    const questions = [
-      {
-        category: "Sports",
-        question: "Which NBA team won the most championships as of 2024?",
-        options: ["Chicago Bulls","Los Angeles Lakers","Boston Celtics","Golden State Warriors"],
-        correctIndex: 2
-      },
-      {
-        category: "Entertainment",
-        question: "Who played Tony Stark in the Marvel Cinematic Universe?",
-        options: ["Chris Evans","Mark Ruffalo","Robert Downey Jr.","Chris Hemsworth"],
-        correctIndex: 2
-      }
-      // ... (add more questions) ...
-    ];
-
     let selectedQuestion = null;
     let timerInterval = null;
 
     function showQuestion(qObj) {
       const wrapper = document.getElementById('questions-wrapper');
+      // Keep the background ? intact
       const bg = wrapper.querySelector('.question-bg');
       wrapper.innerHTML = '';
-      if (bg) wrapper.appendChild(bg);
+      if(bg) wrapper.appendChild(bg);
 
-      selectedQuestion = {
-        answerIndex: qObj.correctIndex,
-        options: qObj.options
-      };
+      const options = qObj.options;
+      const answerIndex = qObj.correctIndex;
+      selectedQuestion = { answerIndex, options };
 
       const block = document.createElement('div');
       block.className = 'question-block';
@@ -15524,16 +15424,16 @@
         <div class="category-title">${qObj.category}</div>
         <div class="question">${qObj.question}</div>
         <div class="options" id="options">
-          ${qObj.options.map((opt, i) =>
+          ${options.map((opt, i) =>
             `<span class="option" id="opt-${i}">${String.fromCharCode(65 + i)}. ${opt}</span>`
           ).join('')}
         </div>
         <div class="reveal" id="reveal" style="display:none;">
-          Answer: <span class="correct">${String.fromCharCode(65 + qObj.correctIndex)}. ${qObj.options[qObj.correctIndex]}</span>
+          Answer: <span class="correct">${String.fromCharCode(65 + answerIndex)}. ${options[answerIndex]}</span>
         </div>
       `;
       wrapper.appendChild(block);
-
+      // Keep background question mark at the back
       if (!bg) {
         const bgDiv = document.createElement('div');
         bgDiv.className = 'question-bg';
@@ -15553,27 +15453,26 @@
     function startTimer(duration) {
       let timer = duration;
       const timerLabel = document.getElementById('timer');
-      timerLabel.textContent = `Revealing answer in ${timer} seconds...`;
-
-      timerInterval = setInterval(() => {
+      timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
+      timerInterval = setInterval(function () {
         timer--;
         if (timer > 0) {
-          timerLabel.textContent = `Revealing answer in ${timer} seconds...`;
+          timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
         } else {
           clearInterval(timerInterval);
-          revealAnswer();
+          timerLabel.textContent = `Answer revealed!`;
         }
       }, 1000);
     }
 
-    // === Init ===
+    // No fetch or async needed!
     (() => {
-      if (!questions.length) {
-        document.getElementById('questions-wrapper').innerText = 'No questions found!';
-        return;
-      }
-      const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-      showQuestion(randomQuestion);
+      // 1. Pick a random question
+      const randIdx = Math.floor(Math.random() * questions.length);
+      const randQuestion = questions[randIdx];
+      // 2. Show the question
+      showQuestion(randQuestion);
+      // 3. Start timer and reveal after 20s
       startTimer(20);
       setTimeout(revealAnswer, 20000);
     })();
