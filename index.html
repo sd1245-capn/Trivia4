@@ -7,23 +7,22 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      padding: 32px 0 0 0; /* Top padding for timer visibility */
       color: #fff;
       height: 100vh;
       background: linear-gradient(135deg, #3a0ca3, #7209b7);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start; /* Keep content away from top edge */
     }
-
     #timer {
-      font-size: 3em;
+      font-size: 2.7em; /* Slightly smaller for better fit */
       margin-bottom: 1em;
+      margin-top: 0.5em; /* Add space above */
       color: #ffd700;
       text-align: center;
     }
-
     .question-block {
       background: rgba(0, 0, 0, 0.6);
       border: 3px solid #fff;
@@ -34,7 +33,6 @@
       text-align: center;
       position: relative;
     }
-
     .question-block::before {
       content: "?";
       position: absolute;
@@ -45,22 +43,18 @@
       transform: translateY(-50%);
       pointer-events: none;
     }
-
     .category-title {
       font-size: 3em;
       margin-bottom: 1em;
       color: #ffd700;
     }
-
     .question {
       font-size: 2.5em;
       margin-bottom: 1em;
     }
-
     .options {
       font-size: 2em;
     }
-
     .option {
       display: block;
       margin: 0.8em 0;
@@ -70,13 +64,11 @@
       background-color: rgba(255, 255, 255, 0.1);
       cursor: default;
     }
-
     .correct {
       color: #00ff99;
       font-weight: bold;
       border-color: #00ff99;
     }
-
     .reveal {
       margin-top: 1.5em;
       font-size: 2em;
@@ -88,7 +80,7 @@
   <div id="timer">Revealing answer in 20 seconds...</div>
   <div id="questions-wrapper"></div>
   <script>
-    // Questions are embedded directly below. No fetch needed!
+    // Questions array
     const questions = [
      {
         "category": "Sports",
@@ -15401,73 +15393,65 @@
     "options": ["Aerosmith", "Guns N' Roses", "AC/DC", "Metallica"],
     "correctIndex": 1
   }
-    ];
+  ];
 
-let selectedQuestion = null;
-let timerInterval = null;
+    let selectedQuestion = null;
+    let timerInterval = null;
 
-function showQuestion(qObj) {
-  const wrapper = document.getElementById('questions-wrapper');
-  wrapper.innerHTML = ''; // Clear previous content
+    function showQuestion(qObj) {
+      const wrapper = document.getElementById('questions-wrapper');
+      wrapper.innerHTML = ''; // Clear previous content
 
-  // Add the background question mark
-  const bgDiv = document.createElement('div');
-  bgDiv.className = 'question-bg';
-  bgDiv.innerText = '?';
-  wrapper.appendChild(bgDiv);
-
-  const options = qObj.options;
-  const answerIndex = qObj.correctIndex;
-  selectedQuestion = { answerIndex, options };
-
-  const block = document.createElement('div');
-  block.className = 'question-block';
-  block.innerHTML = `
-    <div class="category-title">${qObj.category}</div>
-    <div class="question">${qObj.question}</div>
-    <div class="options" id="options">
-      ${options.map((opt, i) =>
-        `<span class="option" id="opt-${i}">${String.fromCharCode(65 + i)}. ${opt}</span>`
-      ).join('')}
-    </div>
-    <div class="reveal" id="reveal" style="display:none;">
-      Answer: <span class="correct">${String.fromCharCode(65 + answerIndex)}. ${options[answerIndex]}</span>
-    </div>
-  `;
-  wrapper.appendChild(block);
-}
-
-function revealAnswer() {
-  if (!selectedQuestion) return;
-  document.getElementById('reveal').style.display = 'block';
-  document.getElementById(`opt-${selectedQuestion.answerIndex}`).classList.add('correct');
-  document.getElementById('timer').innerText = 'Answer revealed!';
-  if (timerInterval) clearInterval(timerInterval);
-}
-
-function startTimer(duration) {
-  let timer = duration;
-  const timerLabel = document.getElementById('timer');
-  timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
-  timerInterval = setInterval(function () {
-    timer--;
-    if (timer > 0) {
-      timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
-    } else {
-      clearInterval(timerInterval);
-      timerLabel.textContent = `Answer revealed!`;
+      const block = document.createElement('div');
+      block.className = 'question-block';
+      block.innerHTML = `
+        <div class="category-title">${qObj.category}</div>
+        <div class="question">${qObj.question}</div>
+        <div class="options" id="options">
+          ${qObj.options.map((opt, i) =>
+            `<span class="option" id="opt-${i}">${String.fromCharCode(65 + i)}. ${opt}</span>`
+          ).join('')}
+        </div>
+        <div class="reveal" id="reveal" style="display:none;">
+          Answer: <span class="correct">${String.fromCharCode(65 + qObj.correctIndex)}. ${qObj.options[qObj.correctIndex]}</span>
+        </div>
+      `;
+      wrapper.appendChild(block);
+      selectedQuestion = { answerIndex: qObj.correctIndex, options: qObj.options };
     }
-  }, 1000);
-}
 
-// No fetch or async needed!
-(() => {
-  // 1. Pick a random question
-  const randIdx = Math.floor(Math.random() * questions.length);
-  const randQuestion = questions[randIdx];
-  // 2. Show the question
-  showQuestion(randQuestion);
-  // 3. Start timer and reveal after 20s
-  startTimer(20);
-  setTimeout(revealAnswer, 20000);
-})();
+    function revealAnswer() {
+      if (!selectedQuestion) return;
+      document.getElementById('reveal').style.display = 'block';
+      document.getElementById(`opt-${selectedQuestion.answerIndex}`).classList.add('correct');
+      document.getElementById('timer').innerText = 'Answer revealed!';
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function startTimer(duration) {
+      let timer = duration;
+      const timerLabel = document.getElementById('timer');
+      timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
+      timerInterval = setInterval(function () {
+        timer--;
+        if (timer > 0) {
+          timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
+        } else {
+          clearInterval(timerInterval);
+          timerLabel.textContent = `Answer revealed!`;
+        }
+      }, 1000);
+    }
+
+    // Run on page load
+    (function() {
+      // Pick a random question
+      const randIdx = Math.floor(Math.random() * questions.length);
+      const randQuestion = questions[randIdx];
+      showQuestion(randQuestion);
+      startTimer(20);
+      setTimeout(revealAnswer, 20000);
+    })();
+  </script>
+</body>
+</html>
