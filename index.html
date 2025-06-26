@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Trivia Widget</title>
   <style>
     body {
@@ -32,8 +32,12 @@
     }
 
     @keyframes countdown {
-      from { width: 100%; }
-      to { width: 0%; }
+      from {
+        width: 100%;
+      }
+      to {
+        width: 0%;
+      }
     }
 
     .question-block {
@@ -103,7 +107,7 @@
   <div id="questions-wrapper"></div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener("DOMContentLoaded", function () {
       const questions = [
     {
         "category": "Sports",
@@ -16520,6 +16524,7 @@
 ];
       let currentQuestionIndex = Math.floor(Math.random() * questions.length);
       const wrapper = document.getElementById("questions-wrapper");
+      let timerInterval;
 
       function showQuestion(q) {
         wrapper.innerHTML = `
@@ -16527,7 +16532,12 @@
             <div class="category-title">${q.category}</div>
             <div class="question">${q.question}</div>
             <div class="options">
-              ${q.options.map((opt, idx) => `<div class=\"option\" data-index=\"${idx}\">${opt}</div>`).join('')}
+              ${q.options
+                .map(
+                  (opt, idx) =>
+                    `<div class="option" data-index="${idx}">${opt}</div>`
+                )
+                .join("")}
             </div>
             <div class="reveal" id="reveal-text">Correct Answer: ${q.options[q.correctIndex]}</div>
           </div>
@@ -16536,20 +16546,33 @@
       }
 
       function startTimer() {
+        clearInterval(timerInterval);
+
         let timeLeft = 20;
         const timerDisplay = document.getElementById("timer");
         const revealText = document.getElementById("reveal-text");
+        const timerBar = document.querySelector(".timer-bar");
 
         timerDisplay.textContent = "20 seconds";
-        const interval = setInterval(() => {
+        revealText.style.display = "none";
+
+        // Reset timer bar animation
+        timerBar.style.animation = "none";
+        void timerBar.offsetWidth; // Trigger reflow
+        timerBar.style.animation = "countdown 20s linear forwards";
+
+        timerInterval = setInterval(() => {
           timeLeft--;
-          timerDisplay.textContent = timeLeft + " seconds";
-          if (timeLeft <= 0) {
-            clearInterval(interval);
+          if (timeLeft > 0) {
+            timerDisplay.textContent = timeLeft + " seconds";
+          } else {
+            clearInterval(timerInterval);
             timerDisplay.textContent = "Time's up!";
-            if (revealText) revealText.style.display = "block";
-const correctOption = document.querySelectorAll('.option')[questions[currentQuestionIndex].correctIndex];
-if (correctOption) correctOption.classList.add('correct');
+            revealText.style.display = "block";
+            const correctOption = document.querySelectorAll(".option")[
+              questions[currentQuestionIndex].correctIndex
+            ];
+            if (correctOption) correctOption.classList.add("correct");
           }
         }, 1000);
       }
