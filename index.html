@@ -16527,7 +16527,7 @@
             <div class="category-title">${q.category}</div>
             <div class="question">${q.question}</div>
             <div class="options">
-              ${q.options.map((opt, idx) => `<div class="option ${idx === q.correctIndex ? 'correct' : ''}">${opt}</div>`).join('')}
+              ${q.options.map((opt, idx) => `<div class=\"option\" data-index=\"${idx}\">${opt}</div>`).join('')}
             </div>
             <div class="reveal" id="reveal-text">Correct Answer: ${q.options[q.correctIndex]}</div>
           </div>
@@ -16548,6 +16548,8 @@
             clearInterval(interval);
             timerDisplay.textContent = "Time's up!";
             if (revealText) revealText.style.display = "block";
+const correctOption = document.querySelectorAll('.option')[questions[currentQuestionIndex].correctIndex];
+if (correctOption) correctOption.classList.add('correct');
           }
         }, 1000);
       }
@@ -16557,4 +16559,3 @@
   </script>
 </body>
 </html>
-   
