@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Trivia Widget</title>
+  <title>Trivia Slide</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -91,6 +91,7 @@
       color: #00ff99;
       font-weight: bold;
       border-color: #00ff99;
+      background-color: rgba(0, 255, 153, 0.2);
     }
 
     .reveal {
@@ -107,7 +108,7 @@
   <div id="questions-wrapper"></div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    window.onload = function () {
       const questions = [
     {
         "category": "Sports",
@@ -16521,64 +16522,71 @@
         ],
         "correctIndex": 1
     }
-];
-      let currentQuestionIndex = Math.floor(Math.random() * questions.length);
+ ];
+
       const wrapper = document.getElementById("questions-wrapper");
-      let timerInterval;
+      const timerDisplay = document.getElementById("timer");
 
-      function showQuestion(q) {
-        wrapper.innerHTML = `
-          <div class="question-block">
-            <div class="category-title">${q.category}</div>
-            <div class="question">${q.question}</div>
-            <div class="options">
-              ${q.options
-                .map(
-                  (opt, idx) =>
-                    `<div class="option" data-index="${idx}">${opt}</div>`
-                )
-                .join("")}
-            </div>
-            <div class="reveal" id="reveal-text">Correct Answer: ${q.options[q.correctIndex]}</div>
-          </div>
-        `;
-        startTimer();
-      }
+      function displayQuestion() {
+        const q = questions[Math.floor(Math.random() * questions.length)];
+        wrapper.innerHTML = "";
 
-      function startTimer() {
-        clearInterval(timerInterval);
+        const block = document.createElement("div");
+        block.className = "question-block";
 
-        let timeLeft = 20;
-        const timerDisplay = document.getElementById("timer");
-        const revealText = document.getElementById("reveal-text");
-        const timerBar = document.querySelector(".timer-bar");
+        const cat = document.createElement("div");
+        cat.className = "category-title";
+        cat.textContent = q.category;
 
-        timerDisplay.textContent = "20 seconds";
-        revealText.style.display = "none";
+        const question = document.createElement("div");
+        question.className = "question";
+        question.textContent = q.question;
 
-        // Reset timer bar animation
-        timerBar.style.animation = "none";
-        void timerBar.offsetWidth; // Trigger reflow
-        timerBar.style.animation = "countdown 20s linear forwards";
+        const opts = document.createElement("div");
+        opts.className = "options";
 
-        timerInterval = setInterval(() => {
-          timeLeft--;
-          if (timeLeft > 0) {
-            timerDisplay.textContent = timeLeft + " seconds";
-          } else {
-            clearInterval(timerInterval);
-            timerDisplay.textContent = "Time's up!";
-            revealText.style.display = "block";
-            const correctOption = document.querySelectorAll(".option")[
-              questions[currentQuestionIndex].correctIndex
-            ];
-            if (correctOption) correctOption.classList.add("correct");
+        const optionElements = [];
+
+        q.options.forEach((opt, i) => {
+          const o = document.createElement("div");
+          o.className = "option";
+          o.textContent = opt;
+          if (i === q.correctIndex) {
+            o.dataset.correct = "true";
           }
+          optionElements.push(o);
+          opts.appendChild(o);
+        });
+
+        const reveal = document.createElement("div");
+        reveal.className = "reveal";
+        reveal.textContent = "Answer revealed!";
+
+        block.appendChild(cat);
+        block.appendChild(question);
+        block.appendChild(opts);
+        block.appendChild(reveal);
+        wrapper.appendChild(block);
+
+        // Timer countdown
+        let countdown = 20;
+        timerDisplay.textContent = `${countdown} seconds`;
+        const interval = setInterval(() => {
+          countdown--;
+          timerDisplay.textContent = `${countdown} seconds`;
+          if (countdown === 0) clearInterval(interval);
         }, 1000);
+
+        // Reveal correct answer
+        setTimeout(() => {
+          const correct = optionElements.find(o => o.dataset.correct === "true");
+          if (correct) correct.classList.add("correct");
+          reveal.style.display = "block";
+        }, 20000);
       }
 
-      showQuestion(questions[currentQuestionIndex]);
-    });
+      displayQuestion();
+    };
   </script>
 </body>
 </html>
