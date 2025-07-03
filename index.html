@@ -32,12 +32,8 @@
     }
 
     @keyframes countdown {
-      from {
-        width: 100%;
-      }
-      to {
-        width: 0%;
-      }
+      from { width: 100%; }
+      to { width: 0%; }
     }
 
     .question-block {
@@ -16522,7 +16518,7 @@
         ],
         "correctIndex": 1
     }
- ];
+  ];
 
       const wrapper = document.getElementById("questions-wrapper");
       const timerDisplay = document.getElementById("timer");
@@ -16545,16 +16541,15 @@
         const opts = document.createElement("div");
         opts.className = "options";
 
-        const optionElements = [];
+        let correctOption = null;
 
         q.options.forEach((opt, i) => {
           const o = document.createElement("div");
           o.className = "option";
           o.textContent = opt;
           if (i === q.correctIndex) {
-            o.dataset.correct = "true";
+            correctOption = o;
           }
-          optionElements.push(o);
           opts.appendChild(o);
         });
 
@@ -16568,21 +16563,19 @@
         block.appendChild(reveal);
         wrapper.appendChild(block);
 
-        // Timer countdown
+        // Manual countdown with a reliable fallback
         let countdown = 20;
         timerDisplay.textContent = `${countdown} seconds`;
+
         const interval = setInterval(() => {
           countdown--;
           timerDisplay.textContent = `${countdown} seconds`;
-          if (countdown === 0) clearInterval(interval);
+          if (countdown <= 0) {
+            clearInterval(interval);
+            correctOption.classList.add("correct");
+            reveal.style.display = "block";
+          }
         }, 1000);
-
-        // Reveal correct answer
-        setTimeout(() => {
-          const correct = optionElements.find(o => o.dataset.correct === "true");
-          if (correct) correct.classList.add("correct");
-          reveal.style.display = "block";
-        }, 20000);
       }
 
       displayQuestion();
