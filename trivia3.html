@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Multiple-Choice Trivia (OpenTDB)</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #222; 
+      color: #fff; 
+      margin: 0; 
+      padding: 0;
+    }
+
+    .question-block { 
+      margin: 2.5em auto; 
+      background: #333; 
+      padding: 3.5em 4.5em; 
+      border-radius: 14px; 
+      box-shadow: 0px 4px 14px rgba(0,0,0,0.2); 
+      max-width: 1100px;
+    }
+
+    .category-title { 
+      font-size: 2.4em;
+      margin-bottom: 0.7em; 
+      color: #ffd700;
+    }
+
+    .question { 
+      font-size: 2.1em;
+      margin-bottom: 1em;
+    }
+
+    .options { 
+      font-size: 1.8em;
+    }
+
+    .option { 
+      display: block; 
+      margin: 0.8em 0;
+    }
+
+    .correct { 
+      color: #00ff99; 
+      font-weight: bold; 
+    }
+
+    .reveal { 
+      margin-top: 1.4em; 
+      font-size: 1.8em;
+      color: #00ff99; 
+    }
+
+    #timer { 
+      text-align: center; 
+      font-size: 2.6em;
+      margin-top: 1em; 
+      color: #ffd700;
+    }
+  </style>
+</head>
+<body>
+  <div id="timer">Revealing answer in 20 seconds...</div>
+  <div id="questions-wrapper"></div>
+
+  <script>
+    let selectedQuestion = null;
+    let selectedCategory = null;
+    let revealTimeout = null;
+    let timerInterval = null;
+
+    function decodeHTMLEntities(text) {
+      const txt = document.createElement("textarea");
+      txt.innerHTML = text;
+      return txt.value;
+    }
+
+    async function fetchAllCategories() {
+      const res = await fetch('https://opentdb.com/api_category.php?cb=' + Date.now(), { cache: "no-store" });
+      const data = await res.json();
+      return data.trivia_categories;
+    }
+
+    async function fetchQuestion(categoryId) {
+      const url = `https://opentdb.com/api.php?amount=1&category=${categoryId}&cb=${Date.now()}`;
+      const res = await fetch(url, { cache: "no-store" });
+      const data = await res.json();
+      if (data.response_code === 0 && data.results.length > 0) {
+        return data.results[0];
+      }
+      return null;
+    }
+
+    async function showRandomQuestion() {
+      const wrapper = document.getElementById('questions-wrapper');
+      wrapper.innerHTML = '';
+
+      const categories = await fetchAllCategories();
+      selectedCategory = categories[Math.floor(Math.random() * categories.length)];
+
+      const qObj = await fetchQuestion(selectedCategory.id);
+
+      if (!qObj) {
+        wrapper.innerHTML = "<div class='question-block'>Could not load a question. Please try again.</div>";
+        return;
+      }
+
+      let options;
+      const correct = decodeHTMLEntities(qObj.correct_answer);
+
+      if (qObj.type === "boolean") {
+        options = ["True", "False"];
+      } else {
+        options = [...qObj.incorrect_answers.map(decodeHTMLEntities)];
+        const answerIndex = Math.floor(Math.random() * (options.length + 1));
+        options.splice(answerIndex, 0, correct);
+      }
+
+      const answerIndex = options.findIndex(opt => opt === correct);
+
+      selectedQuestion = { answerIndex, correct, options };
+
+      const block = document.createElement('div');
+      block.className = 'question-block';
+      block.innerHTML = `
+        <div class="category-title">${selectedCategory.name}</div>
+        <div class="question">${decodeHTMLEntities(qObj.question)}</div>
+        <div class="options" id="options">
+          ${options.map((opt, i) =>
+            `<span class="option" id="opt-${i}">${String.fromCharCode(65 + i)}. ${opt}</span>`
+          ).join('')}
+        </div>
+        <div class="reveal" id="reveal" style="display:none;">
+          Answer: <span class="correct">${String.fromCharCode(65 + answerIndex)}. ${correct}</span>
+        </div>
+      `;
+      wrapper.appendChild(block);
+    }
+
+    function revealAnswer() {
+      if (!selectedQuestion) return;
+      document.getElementById('reveal').style.display = 'block';
+      document.getElementById(`opt-${selectedQuestion.answerIndex}`).classList.add('correct');
+      document.getElementById('timer').innerText = 'Answer revealed!';
+    }
+
+    function startTimer(duration) {
+      let timer = duration;
+      const timerLabel = document.getElementById('timer');
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
+        if (--timer < 0) clearInterval(timerInterval);
+      }, 1000);
+    }
+
+    async function loadNewTrivia() {
+      clearTimeout(revealTimeout);
+      clearInterval(timerInterval);
+
+      await showRandomQuestion();
+      startTimer(20);
+      revealTimeout = setTimeout(revealAnswer, 20000);
+    }
+
+    // Yodeck: reload trivia every time the slide gains focus
+    window.onfocus = () => {
+      loadNewTrivia();
+    };
+
+    // Initial load
+    loadNewTrivia();
+  </script>
+</body>
+</html>
