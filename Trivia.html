@@ -4,23 +4,72 @@
   <meta charset="UTF-8">
   <title>Random Multiple-Choice Trivia (OpenTDB)</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #222; color: #fff; margin: 0; padding: 0;}
-    .question-block { margin: 2em auto; background: #333; padding: 2em 3em; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0,0,0,0.1); max-width: 600px;}
-    .category-title { font-size: 1.4em; margin-bottom: 0.5em; color: #ffd700;}
-    .question { font-size: 1.2em; margin-bottom: 1em;}
-    .options { font-size: 1em;}
-    .option { display: block; margin: 0.5em 0;}
-    .correct { color: #00ff99; font-weight: bold; }
-    .reveal { margin-top: 1em; font-size: 1em; color: #00ff99; }
-    #timer { text-align: center; font-size: 1.5em; margin-top: 1em; color: #ffd700;}
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #222; 
+      color: #fff; 
+      margin: 0; 
+      padding: 0;
+    }
+
+    /* Wider + more padding for readability on 40" TV */
+    .question-block { 
+      margin: 2.5em auto; 
+      background: #333; 
+      padding: 3.5em 4.5em; 
+      border-radius: 14px; 
+      box-shadow: 0px 4px 14px rgba(0,0,0,0.2); 
+      max-width: 1100px;
+    }
+
+    .category-title { 
+      font-size: 2.4em;
+      margin-bottom: 0.7em; 
+      color: #ffd700;
+    }
+
+    .question { 
+      font-size: 2.1em;
+      margin-bottom: 1em;
+    }
+
+    .options { 
+      font-size: 1.8em;
+    }
+
+    .option { 
+      display: block; 
+      margin: 0.8em 0;
+    }
+
+    .correct { 
+      color: #00ff99; 
+      font-weight: bold; 
+    }
+
+    .reveal { 
+      margin-top: 1.4em; 
+      font-size: 1.8em;
+      color: #00ff99; 
+    }
+
+    #timer { 
+      text-align: center; 
+      font-size: 2.6em;
+      margin-top: 1em; 
+      color: #ffd700;
+    }
   </style>
 </head>
 <body>
   <div id="timer">Revealing answer in 20 seconds...</div>
   <div id="questions-wrapper"></div>
+
   <script>
     let selectedQuestion = null;
     let selectedCategory = null;
+    let revealTimeout = null;
+    let timerInterval = null;
 
     function decodeHTMLEntities(text) {
       const txt = document.createElement("textarea");
@@ -28,15 +77,16 @@
       return txt.value;
     }
 
+    // Add cache-buster to prevent Yodeck caching
     async function fetchAllCategories() {
-      const res = await fetch('https://opentdb.com/api_category.php');
+      const res = await fetch('https://opentdb.com/api_category.php?cb=' + Date.now(), { cache: "no-store" });
       const data = await res.json();
-      return data.trivia_categories; // [{id, name}, ...]
+      return data.trivia_categories;
     }
 
     async function fetchQuestion(categoryId) {
-      const url = `https://opentdb.com/api.php?amount=1&category=${categoryId}`;
-      const res = await fetch(url);
+      const url = `https://opentdb.com/api.php?amount=1&category=${categoryId}&cb=${Date.now()}`;
+      const res = await fetch(url, { cache: "no-store" });
       const data = await res.json();
       if (data.response_code === 0 && data.results.length > 0) {
         return data.results[0];
@@ -47,10 +97,10 @@
     async function showRandomQuestion() {
       const wrapper = document.getElementById('questions-wrapper');
       wrapper.innerHTML = '';
-      // Fetch all categories from OpenTDB
+
       const categories = await fetchAllCategories();
-      // Pick one random category
       selectedCategory = categories[Math.floor(Math.random() * categories.length)];
+
       const qObj = await fetchQuestion(selectedCategory.id);
 
       if (!qObj) {
@@ -58,9 +108,9 @@
         return;
       }
 
-      // Handle both multiple and boolean (true/false) questions
       let options;
       const correct = decodeHTMLEntities(qObj.correct_answer);
+
       if (qObj.type === "boolean") {
         options = ["True", "False"];
       } else {
@@ -69,12 +119,10 @@
         options.splice(answerIndex, 0, correct);
       }
 
-      // Find index of correct answer in shuffled options
       const answerIndex = options.findIndex(opt => opt === correct);
 
       selectedQuestion = { answerIndex, correct, options };
 
-      // Display question and options
       const block = document.createElement('div');
       block.className = 'question-block';
       block.innerHTML = `
@@ -102,18 +150,32 @@
     function startTimer(duration) {
       let timer = duration;
       const timerLabel = document.getElementById('timer');
-      const interval = setInterval(function () {
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
         timerLabel.textContent = `Revealing answer in ${timer} second${timer !== 1 ? 's' : ''}...`;
-        if (--timer < 0) clearInterval(interval);
+        if (--timer < 0) clearInterval(timerInterval);
       }, 1000);
     }
 
-    // On page load:
-    (async () => {
+    async function loadNewTrivia() {
+      clearTimeout(revealTimeout);
+      clearInterval(timerInterval);
+
       await showRandomQuestion();
       startTimer(20);
-      setTimeout(revealAnswer, 20000);
-    })();
+      revealTimeout = setTimeout(revealAnswer, 20000);
+    }
+
+    // Yodeck fix: reload question every time slide becomes visible
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        loadNewTrivia();
+      }
+    });
+
+    // Initial load
+    loadNewTrivia();
   </script>
 </body>
 </html>
