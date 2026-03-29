@@ -12,7 +12,6 @@
       padding: 0;
     }
 
-    /* Wider + more padding for readability on 40" TV */
     .question-block { 
       margin: 2.5em auto; 
       background: #333; 
@@ -77,7 +76,6 @@
       return txt.value;
     }
 
-    // Add cache-buster to prevent Yodeck caching
     async function fetchAllCategories() {
       const res = await fetch('https://opentdb.com/api_category.php?cb=' + Date.now(), { cache: "no-store" });
       const data = await res.json();
@@ -167,12 +165,10 @@
       revealTimeout = setTimeout(revealAnswer, 20000);
     }
 
-    // Yodeck fix: reload question every time slide becomes visible
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") {
-        loadNewTrivia();
-      }
-    });
+    // Yodeck: reload trivia every time the slide gains focus
+    window.onfocus = () => {
+      loadNewTrivia();
+    };
 
     // Initial load
     loadNewTrivia();
