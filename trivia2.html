@@ -1,3 +1,6 @@
+if (!window.location.search.includes('v=')) {
+    window.location.href = window.location.pathname + '?v=' + Date.now();
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
