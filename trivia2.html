@@ -1,6 +1,5 @@
-if (!window.location.search.includes('v=')) {
-    window.location.href = window.location.pathname + '?v=' + Date.now();
-}
+if (!window.location.hash.includes('reload')) {
+    window.location.href = window.location.pathname + '#reload' + Date.now();}
 <!DOCTYPE html>
 <html lang="en">
 <head>
