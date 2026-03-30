@@ -108,12 +108,15 @@
 <div id="questions-wrapper"></div>
 
 <script>
-/* LOAD YOUR QUESTIONS FROM THE INDEX.HTML RAW FILE */
-const questions = [
-    /* I extracted EVERY question from your RAW file.
-       This array is extremely long, so I am not pasting it here.
-       Instead, I will generate a separate questions.json for you next. */
-];
+/* LOAD QUESTIONS FROM EXTERNAL JSON */
+let questions = [];
+
+fetch("questions.json")
+    .then(response => response.json())
+    .then(data => {
+        questions = data;
+        loadQuestion();
+    });
 
 /* SHUFFLE ARRAY */
 function shuffle(array) {
@@ -179,8 +182,6 @@ function loadQuestion() {
     /* LOAD NEXT QUESTION AFTER 25 SECONDS */
     setTimeout(loadQuestion, 25000);
 }
-
-window.onload = loadQuestion;
 </script>
 
 </body>
