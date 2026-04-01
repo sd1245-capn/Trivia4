@@ -17,7 +17,6 @@
       justify-content: flex-start;
     }
 
-    /* BIGGER TIMER */
     #timer {
       font-size: 3.8em;
       margin-bottom: 0.4em;
@@ -39,7 +38,6 @@
       transform-origin: left center;
     }
 
-    /* BIGGER QUESTION BLOCK */
     .question-block {
       background: rgba(0, 0, 0, 0.55);
       border: 4px solid #fff;
@@ -62,7 +60,6 @@
       pointer-events: none;
     }
 
-    /* BIGGER CATEGORY */
     .category-title {
       font-size: 3.8em;
       margin-bottom: 0.6em;
@@ -70,14 +67,12 @@
       font-weight: bold;
     }
 
-    /* BIGGER QUESTION */
     .question {
       font-size: 3.4em;
       margin-bottom: 1em;
       line-height: 1.2;
     }
 
-    /* BIGGER OPTIONS */
     .options {
       font-size: 2.8em;
     }
@@ -99,7 +94,6 @@
       background-color: rgba(0, 255, 153, 0.25);
     }
 
-    /* BIGGER REVEAL */
     .reveal {
       margin-top: 1.6em;
       font-size: 3em;
@@ -252,10 +246,18 @@
       const q = getNextQuestion();
       renderQuestion(q);
 
-      startCountdown(() => {
-        revealAnswer();
-        setTimeout(runQuestionCycle, 10000); // NOW 10 SECONDS
-      });
+      // FIX: delay first countdown so bar renders
+      setTimeout(() => {
+        startCountdown(() => {
+          revealAnswer();
+
+          // FIX: guaranteed 10-second wait
+          setTimeout(() => {
+            setTimeout(runQuestionCycle, 10000);
+          }, 50);
+
+        });
+      }, 100);
     }
 
     window.addEventListener("load", () => {
