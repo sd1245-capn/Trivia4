@@ -17,9 +17,9 @@
       justify-content: flex-start;
     }
 
-    /* MUCH BIGGER TIMER */
+    /* BIGGER TIMER */
     #timer {
-      font-size: 3.4em;
+      font-size: 3.8em;
       margin-bottom: 0.4em;
       color: #ffd700;
       text-align: center;
@@ -43,7 +43,7 @@
     .question-block {
       background: rgba(0, 0, 0, 0.55);
       border: 4px solid #fff;
-      padding: 3em 5em;
+      padding: 3.5em 5.5em;
       border-radius: 24px;
       max-width: 95%;
       width: 1200px;
@@ -64,7 +64,7 @@
 
     /* BIGGER CATEGORY */
     .category-title {
-      font-size: 3.4em;
+      font-size: 3.8em;
       margin-bottom: 0.6em;
       color: #ffd700;
       font-weight: bold;
@@ -72,21 +72,21 @@
 
     /* BIGGER QUESTION */
     .question {
-      font-size: 3em;
+      font-size: 3.4em;
       margin-bottom: 1em;
       line-height: 1.2;
     }
 
     /* BIGGER OPTIONS */
     .options {
-      font-size: 2.4em;
+      font-size: 2.8em;
     }
 
     .option {
       display: block;
       margin: 0.9em 0;
       border: 3px solid #fff;
-      padding: 0.5em 0.8em;
+      padding: 0.6em 1em;
       border-radius: 14px;
       background-color: rgba(255, 255, 255, 0.12);
       cursor: default;
@@ -102,7 +102,7 @@
     /* BIGGER REVEAL */
     .reveal {
       margin-top: 1.6em;
-      font-size: 2.6em;
+      font-size: 3em;
       color: #00ff99;
       display: none;
       font-weight: bold;
@@ -254,7 +254,7 @@
 
       startCountdown(() => {
         revealAnswer();
-        setTimeout(runQuestionCycle, 4000);
+        setTimeout(runQuestionCycle, 8000); // SLOWER TRANSITION
       });
     }
 
