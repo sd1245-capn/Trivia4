@@ -112,30 +112,32 @@
 
   <script>
     const QUESTIONS = [
-      {
-        category: "General Knowledge",
-        question: "What is the capital of New Jersey?",
-        correct: "Trenton",
-        incorrect: ["Newark", "Jersey City", "Camden"]
-      },
-      {
-        category: "Sports",
-        question: "Which team plays at Citizens Bank Park?",
-        correct: "Philadelphia Phillies",
-        incorrect: ["New York Mets", "Boston Red Sox", "Atlanta Braves"]
-      },
-      {
-        category: "History",
-        question: "In which year did World War II end?",
-        correct: "1945",
-        incorrect: ["1939", "1942", "1950"]
-      },
-      {
-        category: "Entertainment",
-        question: "Who played Rocky Balboa?",
-        correct: "Sylvester Stallone",
-        incorrect: ["Arnold Schwarzenegger", "Bruce Willis", "Robert De Niro"]
-      }
+    { category: "Phillies", question: "What year were the Philadelphia Phillies founded?", options: ["1883", "1890", "1901", "1912"], correctIndex: 0 },
+{ category: "Phillies", question: "Who is the Phillies’ all-time home run leader?", options: ["Ryan Howard", "Mike Schmidt", "Chase Utley", "Del Ennis"], correctIndex: 1 },
+{ category: "Phillies", question: "Which Phillies pitcher threw a perfect game in 2010?", options: ["Roy Halladay", "Cole Hamels", "Cliff Lee", "Roy Oswalt"], correctIndex: 0 },
+{ category: "Phillies", question: "Who was the MVP of the 2008 World Series?", options: ["Chase Utley", "Ryan Howard", "Cole Hamels", "Jimmy Rollins"], correctIndex: 2 },
+{ category: "Phillies", question: "What is the name of the Phillies’ home stadium?", options: ["Veterans Stadium", "Citizens Bank Park", "Shibe Park", "Connie Mack Stadium"], correctIndex: 1 },
+{ category: "Phillies", question: "Who managed the Phillies to the 2008 World Series title?", options: ["Charlie Manuel", "Larry Bowa", "Ryne Sandberg", "Joe Girardi"], correctIndex: 0 },
+{ category: "Phillies", question: "Which Phillies player is known as 'The Big Piece'?", options: ["Chase Utley", "Ryan Howard", "Pat Burrell", "Jim Thome"], correctIndex: 1 },
+{ category: "Phillies", question: "Who is the Phillies’ all-time hits leader?", options: ["Jimmy Rollins", "Mike Schmidt", "Richie Ashburn", "Chase Utley"], correctIndex: 0 },
+{ category: "Phillies", question: "What year did the Phillies win their first World Series?", options: ["1976", "1980", "1983", "1993"], correctIndex: 1 },
+{ category: "Phillies", question: "Which Phillies pitcher won the 1980 World Series MVP?", options: ["Steve Carlton", "Tug McGraw", "Larry Christenson", "Dick Ruthven"], correctIndex: 0 },
+{ category: "Phillies", question: "Who hit the walk-off home run in Game 5 of the 1993 NLCS?", options: ["Lenny Dykstra", "John Kruk", "Mitch Williams", "Jim Eisenreich"], correctIndex: 0 },
+{ category: "Phillies", question: "What is the mascot of the Phillies called?", options: ["The Philly Gator", "The Liberty Bird", "The Phillie Phanatic", "The Philly Monster"], correctIndex: 2 },
+{ category: "Phillies", question: "Who was the Phillies’ first player to win NL MVP?", options: ["Chuck Klein", "Mike Schmidt", "Richie Ashburn", "Del Ennis"], correctIndex: 0 },
+{ category: "Phillies", question: "Which Phillies pitcher won the Cy Young Award in 2010?", options: ["Cole Hamels", "Roy Halladay", "Cliff Lee", "Roy Oswalt"], correctIndex: 1 },
+{ category: "Phillies", question: "Who is the Phillies’ all-time strikeout leader?", options: ["Steve Carlton", "Robin Roberts", "Cole Hamels", "Curt Schilling"], correctIndex: 0 },
+{ category: "Phillies", question: "What year did Citizens Bank Park open?", options: ["2002", "2003", "2004", "2005"], correctIndex: 2 },
+{ category: "Phillies", question: "Who hit the famous 'Stairs rips one into the night' HR in 2008?", options: ["Pat Burrell", "Matt Stairs", "Shane Victorino", "Jayson Werth"], correctIndex: 1 },
+{ category: "Phillies", question: "Which Phillies player won Rookie of the Year in 2005?", options: ["Ryan Howard", "Chase Utley", "Jimmy Rollins", "Shane Victorino"], correctIndex: 0 },
+{ category: "Phillies", question: "Who was the Phillies’ starting shortstop in 2008?", options: ["Jimmy Rollins", "Eric Bruntlett", "Freddy Galvis", "Kevin Stocker"], correctIndex: 0 },
+{ category: "Phillies", question: "Which Phillies pitcher threw a postseason no-hitter in 2010?", options: ["Cole Hamels", "Cliff Lee", "Roy Halladay", "Roy Oswalt"], correctIndex: 2 },
+{ category: "Phillies", question: "Who is the Phillies’ all-time stolen base leader?", options: ["Jimmy Rollins", "Juan Samuel", "Billy Hamilton", "Shane Victorino"], correctIndex: 0 },
+{ category: "Phillies", question: "What year did the Phillies last appear in the World Series?", options: ["2009", "2010", "2022", "2023"], correctIndex: 2 },
+{ category: "Phillies", question: "Who was the Phillies’ closer during the 2008 championship run?", options: ["Ryan Madson", "Tom Gordon", "Brad Lidge", "Antonio Alfonseca"], correctIndex: 2 },
+{ category: "Phillies", question: "Which Phillies legend was nicknamed 'Lefty'?", options: ["Steve Carlton", "Jim Bunning", "Curt Simmons", "Cole Hamels"], correctIndex: 0 },
+{ category: "Phillies", question: "Who hit the game-winning hit in Game 5 of the 2008 World Series?", options: ["Chase Utley", "Pat Burrell", "Pedro Feliz", "Shane Victorino"], correctIndex: 2 }
+  
     ];
 
     let questionOrder = [];
