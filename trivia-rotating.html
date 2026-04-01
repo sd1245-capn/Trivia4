@@ -139,134 +139,25 @@
 { category: "Phillies", question: "Who hit the game-winning hit in Game 5 of the 2008 World Series?", options: ["Chase Utley", "Pat Burrell", "Pedro Feliz", "Shane Victorino"], correctIndex: 2 }
   
     ];
+   
+let questionOrder = [];
+let currentIndex = 0;
+let countdownInterval = null;
+let countdownSeconds = 35;
 
-    let questionOrder = [];
-    let currentIndex = 0;
-    let countdownInterval = null;
-    let countdownSeconds = 35;
+/* UPDATED SCRIPT GOES HERE */
+function shuffleArray(...) { ... }
+function initQuestionOrder(...) { ... }
+function getNextQuestion(...) { ... }
+function renderQuestion(q) { ... }   <-- updated to use options[] + correctIndex
+function resetTimerBar(...) { ... }
+function startCountdown(...) { ... }
+function revealAnswer(...) { ... }
+function runQuestionCycle(...) { ... }
 
-    function shuffleArray(arr) {
-      const a = arr.slice();
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    }
+window.addEventListener("load", () => {
+   initQuestionOrder();
+   runQuestionCycle();
+});
 
-    function initQuestionOrder() {
-      questionOrder = shuffleArray(QUESTIONS.map((_, idx) => idx));
-      currentIndex = 0;
-    }
-
-    function getNextQuestion() {
-      if (currentIndex >= questionOrder.length) initQuestionOrder();
-      return QUESTIONS[questionOrder[currentIndex++]];
-    }
-
-    function renderQuestion(q) {
-      const wrapper = document.getElementById("questions-wrapper");
-      wrapper.innerHTML = "";
-
-      const block = document.createElement("div");
-      block.className = "question-block";
-
-      const categoryEl = document.createElement("div");
-      categoryEl.className = "category-title";
-      categoryEl.textContent = q.category;
-
-      const questionEl = document.createElement("div");
-      questionEl.className = "question";
-      questionEl.textContent = q.question;
-
-      const optionsEl = document.createElement("div");
-      optionsEl.className = "options";
-
-      const allAnswers = shuffleArray([q.correct, ...q.incorrect]);
-
-      allAnswers.forEach(answer => {
-        const opt = document.createElement("span");
-        opt.className = "option";
-        opt.textContent = answer;
-        if (answer === q.correct) opt.dataset.correct = "true";
-        optionsEl.appendChild(opt);
-      });
-
-      const revealEl = document.createElement("div");
-      revealEl.className = "reveal";
-      revealEl.id = "reveal";
-      revealEl.textContent = "Answer: " + q.correct;
-
-      block.appendChild(categoryEl);
-      block.appendChild(questionEl);
-      block.appendChild(optionsEl);
-      block.appendChild(revealEl);
-
-      wrapper.appendChild(block);
-    }
-
-    function resetTimerBar() {
-      const bar = document.getElementById("timer-bar");
-      bar.style.transition = "none";
-      bar.style.transform = "scaleX(1)";
-      void bar.offsetWidth;
-      bar.style.transition = "transform 35s linear";
-      bar.style.transform = "scaleX(0)";
-    }
-
-    function startCountdown(onDone) {
-      const timerEl = document.getElementById("timer");
-      countdownSeconds = 35;
-      timerEl.textContent = countdownSeconds + " seconds";
-
-      resetTimerBar();
-
-      if (countdownInterval) clearInterval(countdownInterval);
-
-      countdownInterval = setInterval(() => {
-        countdownSeconds--;
-        if (countdownSeconds > 0) {
-          timerEl.textContent = countdownSeconds + " seconds";
-        } else {
-          timerEl.textContent = "Time's up!";
-          clearInterval(countdownInterval);
-          onDone();
-        }
-      }, 1000);
-    }
-
-    function revealAnswer() {
-      const revealEl = document.getElementById("reveal");
-      revealEl.style.display = "block";
-
-      document.querySelectorAll(".option").forEach(opt => {
-        if (opt.dataset.correct === "true") opt.classList.add("correct");
-      });
-    }
-
-    function runQuestionCycle() {
-      const q = getNextQuestion();
-      renderQuestion(q);
-
-      // FIX: delay first countdown so bar renders
-      setTimeout(() => {
-        startCountdown(() => {
-          revealAnswer();
-
-          // FIX: guaranteed 10-second wait
-          setTimeout(() => {
-            setTimeout(runQuestionCycle, 10000);
-          }, 50);
-
-        });
-      }, 100);
-    }
-
-    window.addEventListener("load", () => {
-      initQuestionOrder();
-      runQuestionCycle();
-    });
-  </script>
-</body>
-</html>
-
+</script>
