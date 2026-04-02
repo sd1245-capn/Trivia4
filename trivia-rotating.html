@@ -2484,7 +2484,8 @@ let countdownInterval = null;
 let countdownSeconds = 35;
 
 function initQuestionOrder() {
-  questionOrder = shuffleArray(QUESTIONS.map((_, idx) => idx));
+  questionOrder = QUESTIONS.map((_, idx) => idx);
+  shuffleArray(questionOrder);
   currentIndex = 0;
 }
 
