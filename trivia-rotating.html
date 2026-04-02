@@ -2517,7 +2517,8 @@ function renderQuestion(q) {
     isCorrect: i === q.correctIndex
   }));
 
-  const shuffled = shuffleArray(indexedOptions);
+  shuffleArray(indexedOptions);
+const shuffled = indexedOptions;
 
   shuffled.forEach(optObj => {
     const opt = document.createElement("span");
