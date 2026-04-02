@@ -9232,9 +9232,39 @@ function initQuestionOrder() {
   currentIndex = 0;
 }
 
+let lastCategories = [];
+
 function getNextQuestion() {
-  if (currentIndex >= questionOrder.length) initQuestionOrder();
-  return QUESTIONS[questionOrder[currentIndex++]];
+  // Build a list of available indexes that do NOT repeat the last 2 categories
+  const available = questionOrder.filter(idx => {
+    const cat = QUESTIONS[idx].category;
+    return !lastCategories.includes(cat);
+  });
+
+  let chosenIndex;
+
+  if (available.length > 0) {
+    // Pick from allowed categories
+    const rand = Math.floor(Math.random() * available.length);
+    chosenIndex = available[rand];
+  } else {
+    // All categories blocked — fallback to full random
+    const rand = Math.floor(Math.random() * questionOrder.length);
+    chosenIndex = questionOrder[rand];
+  }
+
+  // Remove chosen index from the pool
+  questionOrder = questionOrder.filter(i => i !== chosenIndex);
+
+  // Reset pool if empty
+  if (questionOrder.length === 0) initQuestionOrder();
+
+  // Track last 2 categories
+  const chosenCategory = QUESTIONS[chosenIndex].category;
+  lastCategories.push(chosenCategory);
+  if (lastCategories.length > 2) lastCategories.shift();
+
+  return QUESTIONS[chosenIndex];
 }
 
 function renderQuestion(q) {
