@@ -29,7 +29,7 @@
   .timer-bar-container {
     width: 100%;
     max-width: 1200px;
-    margin-bottom: 1.2em;
+    margin: 1em auto 1.2em auto;
   }
 
   .timer-bar {
@@ -42,12 +42,14 @@
   .question-block {
     background: rgba(0, 0, 0, 0.55);
     border: 4px solid #fff;
-    padding: 3.5em 5.5em;
+    padding: 2em 2.5em;
     border-radius: 24px;
     max-width: 95%;
     width: 1200px;
     text-align: center;
     position: relative;
+    box-sizing: border-box;
+    min-height: 400px;
   }
 
   .question-block::before {
@@ -103,6 +105,7 @@
     font-weight: bold;
   }
 </style>
+
 </head>
 
 <body>
