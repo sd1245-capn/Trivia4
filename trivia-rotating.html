@@ -9296,171 +9296,140 @@ const QUESTIONS = [
   {"category":"Military TV Shows","question":"Which show features the character Lt. Colonel Blake?","options":["M*A*S*H","Hogan's Heroes","Combat!","China Beach"],"correctIndex":0}
 
 ]
+// ===============================
+// FORCE RESET (fixes Yodeck reuse)
+// ===============================
+if (window.__triviaResetApplied !== true) {
+    window.__triviaResetApplied = true;
 
-  function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+    // Kill any leftover timers from reused WebView
+    if (window.__triviaTimers) {
+        window.__triviaTimers.forEach(t => clearTimeout(t));
     }
-}
-  
-/* ============================
-   SCRIPT LOGIC (UPDATED)
-   ============================ */
+    window.__triviaTimers = [];
 
-let questionOrder = [];
-let currentIndex = 0;
-let countdownInterval = null;
-let countdownSeconds = 35;
-
-function initQuestionOrder() {
-  questionOrder = QUESTIONS.map((_, idx) => idx);
-  shuffleArray(questionOrder);
-  currentIndex = 0;
+    // Reset DOM once loaded
+    document.addEventListener("DOMContentLoaded", () => {
+        const timerEl = document.getElementById("timer");
+        const barEl = document.getElementById("timer-bar");
+        timerEl.textContent = "35 seconds";
+        barEl.style.transition = "none";
+        barEl.style.transform = "scaleX(1)";
+    });
 }
 
-let lastCategories = [];
+// ===============================
+// SINGLE QUESTION MODE
+// ===============================
 
-function getNextQuestion() {
-  // Build a list of available indexes that do NOT repeat the last 2 categories
-  const available = questionOrder.filter(idx => {
-    const cat = QUESTIONS[idx].category;
-    return !lastCategories.includes(cat);
-  });
-
-  let chosenIndex;
-
-  if (available.length > 0) {
-    // Pick from allowed categories
-    const rand = Math.floor(Math.random() * available.length);
-    chosenIndex = available[rand];
-  } else {
-    // All categories blocked — fallback to full random
-    const rand = Math.floor(Math.random() * questionOrder.length);
-    chosenIndex = questionOrder[rand];
-  }
-
-  // Remove chosen index from the pool
-  questionOrder = questionOrder.filter(i => i !== chosenIndex);
-
-  // Reset pool if empty
-  if (questionOrder.length === 0) initQuestionOrder();
-
-  // Track last 2 categories
-  const chosenCategory = QUESTIONS[chosenIndex].category;
-  lastCategories.push(chosenCategory);
-  if (lastCategories.length > 2) lastCategories.shift();
-
-  return QUESTIONS[chosenIndex];
+// Pick ONE random question
+function getSingleQuestion() {
+    const idx = Math.floor(Math.random() * QUESTIONS.length);
+    return QUESTIONS[idx];
 }
 
 function renderQuestion(q) {
-  const wrapper = document.getElementById("questions-wrapper");
-  wrapper.innerHTML = "";
+    const wrapper = document.getElementById("questions-wrapper");
+    wrapper.innerHTML = "";
 
-  const block = document.createElement("div");
-  block.className = "question-block";
+    const block = document.createElement("div");
+    block.className = "question-block";
 
-  const categoryEl = document.createElement("div");
-  categoryEl.className = "category-title";
-  categoryEl.textContent = q.category;
+    const categoryEl = document.createElement("div");
+    categoryEl.className = "category-title";
+    categoryEl.textContent = q.category;
 
-  const questionEl = document.createElement("div");
-  questionEl.className = "question";
-  questionEl.textContent = q.question;
+    const questionEl = document.createElement("div");
+    questionEl.className = "question";
+    questionEl.textContent = q.question;
 
-  const optionsEl = document.createElement("div");
-  optionsEl.className = "options";
+    const optionsEl = document.createElement("div");
+    optionsEl.className = "options";
 
-  const indexedOptions = q.options.map((opt, i) => ({
-    text: opt,
-    isCorrect: i === q.correctIndex
-  }));
+    const indexedOptions = q.options.map((opt, i) => ({
+        text: opt,
+        isCorrect: i === q.correctIndex
+    }));
 
-  shuffleArray(indexedOptions);
-const shuffled = indexedOptions;
+    shuffleArray(indexedOptions);
 
-  shuffled.forEach(optObj => {
-    const opt = document.createElement("span");
-    opt.className = "option";
-    opt.textContent = optObj.text;
-    if (optObj.isCorrect) opt.dataset.correct = "true";
-    optionsEl.appendChild(opt);
-  });
+    indexedOptions.forEach(optObj => {
+        const opt = document.createElement("span");
+        opt.className = "option";
+        opt.textContent = optObj.text;
+        if (optObj.isCorrect) opt.dataset.correct = "true";
+        optionsEl.appendChild(opt);
+    });
 
-  const revealEl = document.createElement("div");
-  revealEl.className = "reveal";
-  revealEl.id = "reveal";
-  revealEl.textContent = "Answer: " + q.options[q.correctIndex];
+    const revealEl = document.createElement("div");
+    revealEl.className = "reveal";
+    revealEl.id = "reveal";
+    revealEl.textContent = "Answer: " + q.options[q.correctIndex];
 
-  block.appendChild(categoryEl);
-  block.appendChild(questionEl);
-  block.appendChild(optionsEl);
-  block.appendChild(revealEl);
+    block.appendChild(categoryEl);
+    block.appendChild(questionEl);
+    block.appendChild(optionsEl);
+    block.appendChild(revealEl);
 
-  wrapper.appendChild(block);
+    wrapper.appendChild(block);
 }
 
 function resetTimerBar() {
-  const bar = document.getElementById("timer-bar");
-  bar.style.transition = "none";
-  bar.style.transform = "scaleX(1)";
-  void bar.offsetWidth;
-  bar.style.transition = "transform 35s linear";
-  bar.style.transform = "scaleX(0)";
+    const bar = document.getElementById("timer-bar");
+    bar.style.transition = "none";
+    bar.style.transform = "scaleX(1)";
+    void bar.offsetWidth;
+    bar.style.transition = "transform 35s linear";
+    bar.style.transform = "scaleX(0)";
 }
 
 function startCountdown(onDone) {
-  const timerEl = document.getElementById("timer");
-  countdownSeconds = 35;
-  timerEl.textContent = countdownSeconds + " seconds";
+    const timerEl = document.getElementById("timer");
+    let seconds = 35;
+    timerEl.textContent = seconds + " seconds";
 
-  resetTimerBar();
+    resetTimerBar();
 
-  if (countdownInterval) clearInterval(countdownInterval);
+    const tick = () => {
+        seconds--;
+        if (seconds > 0) {
+            timerEl.textContent = seconds + " seconds";
+            window.__triviaTimers.push(setTimeout(tick, 1000));
+        } else {
+            timerEl.textContent = "Time's up!";
+            onDone();
+        }
+    };
 
-  countdownInterval = setInterval(() => {
-    countdownSeconds--;
-    if (countdownSeconds > 0) {
-      timerEl.textContent = countdownSeconds + " seconds";
-    } else {
-      timerEl.textContent = "Time's up!";
-      clearInterval(countdownInterval);
-      onDone();
-    }
-  }, 1000);
+    window.__triviaTimers.push(setTimeout(tick, 1000));
 }
 
 function revealAnswer() {
-  const revealEl = document.getElementById("reveal");
-  revealEl.style.display = "block";
+    const revealEl = document.getElementById("reveal");
+    revealEl.style.display = "block";
 
-  document.querySelectorAll(".option").forEach(opt => {
-    if (opt.dataset.correct === "true") opt.classList.add("correct");
-  });
-}
-
-function runQuestionCycle() {
-  const q = getNextQuestion();
-  renderQuestion(q);
-
-  setTimeout(() => {
-    startCountdown(() => {
-      revealAnswer();
-
-      setTimeout(() => {
-        setTimeout(runQuestionCycle, 10000);
-      }, 50);
-
+    document.querySelectorAll(".option").forEach(opt => {
+        if (opt.dataset.correct === "true") opt.classList.add("correct");
     });
-  }, 100);
 }
 
+// ===============================
+// MAIN — ONE QUESTION ONLY
+// ===============================
 window.addEventListener("load", () => {
-  initQuestionOrder();
-  runQuestionCycle();
+    const q = getSingleQuestion();
+    renderQuestion(q);
+
+    setTimeout(() => {
+        startCountdown(() => {
+            revealAnswer();
+            // STOP — do NOT load another question
+        });
+    }, 150);
 });
 </script>
+
+
 
 </body>
 </html>
