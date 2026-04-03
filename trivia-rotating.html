@@ -9303,14 +9303,17 @@ const QUESTIONS = [
     }
 }
 // ALWAYS RESET — Yodeck reuses the WebView
-if (window.__triviaTimers) {
-    window.__triviaTimers.forEach(t => clearTimeout(t));
-}
-window.__triviaTimers = [];
+window.addEventListener("load", () => {
+    // Clear timers
+    if (window.__triviaTimers) {
+        window.__triviaTimers.forEach(t => clearTimeout(t));
+    }
+    window.__triviaTimers = [];
 
-document.addEventListener("DOMContentLoaded", () => {
+    // Reset timer text and bar
     const timerEl = document.getElementById("timer");
     const barEl = document.getElementById("timer-bar");
+
     timerEl.textContent = "35 seconds";
     barEl.style.transition = "none";
     barEl.style.transform = "scaleX(1)";
