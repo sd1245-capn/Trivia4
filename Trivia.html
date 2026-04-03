@@ -165,10 +165,29 @@
       revealTimeout = setTimeout(revealAnswer, 20000);
     }
 
-    // Yodeck: reload trivia every time the slide gains focus
-    window.onfocus = () => {
-      loadNewTrivia();
-    };
+    /* -----------------------------
+       YODECK FIX: FULL STATE RESET
+       ----------------------------- */
+    function resetTriviaState() {
+      selectedQuestion = null;
+      selectedCategory = null;
+
+      clearTimeout(revealTimeout);
+      clearInterval(timerInterval);
+
+      document.getElementById('timer').textContent =
+        "Revealing answer in 20 seconds...";
+
+      document.getElementById('questions-wrapper').innerHTML = "";
+    }
+
+    // Fires EVERY time the slide becomes visible again in Yodeck
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) {
+        resetTriviaState();
+        loadNewTrivia();
+      }
+    });
 
     // Initial load
     loadNewTrivia();
