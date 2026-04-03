@@ -9302,28 +9302,19 @@ const QUESTIONS = [
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-
-// ===============================
-// FORCE RESET (fixes Yodeck reuse)
-// ===============================
-if (window.__triviaResetApplied !== true) {
-    window.__triviaResetApplied = true;
-
-    // Kill any leftover timers from reused WebView
-    if (window.__triviaTimers) {
-        window.__triviaTimers.forEach(t => clearTimeout(t));
-    }
-    window.__triviaTimers = [];
-
-    // Reset DOM once loaded
-    document.addEventListener("DOMContentLoaded", () => {
-        const timerEl = document.getElementById("timer");
-        const barEl = document.getElementById("timer-bar");
-        timerEl.textContent = "35 seconds";
-        barEl.style.transition = "none";
-        barEl.style.transform = "scaleX(1)";
-    });
+// ALWAYS RESET — Yodeck reuses the WebView
+if (window.__triviaTimers) {
+    window.__triviaTimers.forEach(t => clearTimeout(t));
 }
+window.__triviaTimers = [];
+
+document.addEventListener("DOMContentLoaded", () => {
+    const timerEl = document.getElementById("timer");
+    const barEl = document.getElementById("timer-bar");
+    timerEl.textContent = "35 seconds";
+    barEl.style.transition = "none";
+    barEl.style.transform = "scaleX(1)";
+});
 
 // ===============================
 // SINGLE QUESTION MODE
