@@ -9295,7 +9295,16 @@ const QUESTIONS = [
   {"category":"Military TV Shows","question":"Which show stars Rami Malek as a soldier in WWII?","options":["The Pacific","Band of Brothers","Generation Kill","Combat!"],"correctIndex":0},
   {"category":"Military TV Shows","question":"Which show features the character Lt. Colonel Blake?","options":["M*A*S*H","Hogan's Heroes","Combat!","China Beach"],"correctIndex":0}
 
-]
+];
+ const QUESTIONS = [
+   ...all your questions...
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
 // ===============================
 // FORCE RESET (fixes Yodeck reuse)
 // ===============================
