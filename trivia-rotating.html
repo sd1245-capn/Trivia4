@@ -9300,39 +9300,46 @@ const QUESTIONS = [
   {"category":"Military TV Shows","question":"Which show features the character Lt. Colonel Blake?","options":["MASH","Hogan's Heroes","Combat!","China Beach"],"correctIndex":0}
 
 ];
- function shuffleArray(array) {
+ /* ============================================================
+   SHUFFLE UTILITY
+   ============================================================ */
+function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-// ALWAYS RESET — Yodeck reuses the WebView
-window.addEventListener("load", () => {
-    // Clear timers
-    if (window.__triviaTimers) {
-        window.__triviaTimers.forEach(t => clearTimeout(t));
-    }
-    window.__triviaTimers = [];
 
-    // Reset timer text and bar
-    const timerEl = document.getElementById("timer");
-    const barEl = document.getElementById("timer-bar");
+/* ============================================================
+   GLOBAL STATE
+   ============================================================ */
+window.__triviaTimers = [];
+let usedCategories = new Set();
 
-    timerEl.textContent = "35 seconds";
-    barEl.style.transition = "none";
-    barEl.style.transform = "scaleX(1)";
-});
-
-// ===============================
-// SINGLE QUESTION MODE
-// ===============================
-
-// Pick ONE random question
+/* ============================================================
+   PICK A RANDOM QUESTION — NO CATEGORY REPEATS
+   ============================================================ */
 function getSingleQuestion() {
-    const idx = Math.floor(Math.random() * QUESTIONS.length);
-    return QUESTIONS[idx];
+    // If all categories used, reset
+    if (usedCategories.size === QUESTIONS.length) {
+        usedCategories.clear();
+    }
+
+    // Filter out categories already used
+    const available = QUESTIONS.filter(q => !usedCategories.has(q.category));
+
+    // Pick one
+    const q = available[Math.floor(Math.random() * available.length)];
+
+    // Mark category as used
+    usedCategories.add(q.category);
+
+    return q;
 }
 
+/* ============================================================
+   RENDER QUESTION
+   ============================================================ */
 function renderQuestion(q) {
     const wrapper = document.getElementById("questions-wrapper");
     wrapper.innerHTML = "";
@@ -9379,6 +9386,9 @@ function renderQuestion(q) {
     wrapper.appendChild(block);
 }
 
+/* ============================================================
+   TIMER BAR
+   ============================================================ */
 function resetTimerBar() {
     const bar = document.getElementById("timer-bar");
     bar.style.transition = "none";
@@ -9388,6 +9398,9 @@ function resetTimerBar() {
     bar.style.transform = "scaleX(0)";
 }
 
+/* ============================================================
+   COUNTDOWN
+   ============================================================ */
 function startCountdown(onDone) {
     const timerEl = document.getElementById("timer");
     let seconds = 35;
@@ -9409,6 +9422,9 @@ function startCountdown(onDone) {
     window.__triviaTimers.push(setTimeout(tick, 1000));
 }
 
+/* ============================================================
+   REVEAL ANSWER
+   ============================================================ */
 function revealAnswer() {
     const revealEl = document.getElementById("reveal");
     revealEl.style.display = "block";
@@ -9418,23 +9434,57 @@ function revealAnswer() {
     });
 }
 
-// ===============================
-// MAIN — ONE QUESTION ONLY
-// ===============================
-window.addEventListener("load", () => {
+/* ============================================================
+   FULL RESET — THIS FIXES YODECK
+   ============================================================ */
+function resetTriviaState() {
+    // Clear timers
+    if (window.__triviaTimers) {
+        window.__triviaTimers.forEach(t => clearTimeout(t));
+    }
+    window.__triviaTimers = [];
+
+    // Reset timer text
+    const timerEl = document.getElementById("timer");
+    timerEl.textContent = "35 seconds";
+
+    // Reset bar
+    const barEl = document.getElementById("timer-bar");
+    barEl.style.transition = "none";
+    barEl.style.transform = "scaleX(1)";
+
+    // Clear question
+    document.getElementById("questions-wrapper").innerHTML = "";
+}
+
+/* ============================================================
+   LOAD A NEW QUESTION
+   ============================================================ */
+function loadNewTrivia() {
+    resetTriviaState();
+
     const q = getSingleQuestion();
     renderQuestion(q);
 
     setTimeout(() => {
         startCountdown(() => {
             revealAnswer();
-            // STOP — do NOT load another question
         });
     }, 150);
+}
+
+/* ============================================================
+   YODECK FIX — VISIBILITY CHANGE
+   ============================================================ */
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        loadNewTrivia();
+    }
 });
-</script>
 
-
-
-</body>
-</html>
+/* ============================================================
+   INITIAL LOAD
+   ============================================================ */
+window.addEventListener("load", () => {
+    loadNewTrivia();
+});
